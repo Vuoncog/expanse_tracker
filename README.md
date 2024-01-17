@@ -1,16 +1,23 @@
 # expanse_tracker
 
-A new Flutter project.
+## :building_construction: Tech Stack
+- Kotlin
+- MongoDB
+- Firebase Storage
+- GCP (APIs & Services)
 
-## Getting Started
+### Feature
+- Add/Remove Expense
+- Chart of all expenses
 
-This project is a starting point for a Flutter application.
+## :camera_flash: **Screenshots**
+### Home Screen
+<p align="center">
+<img img width="200" src="./assets/home.png">
+<img img width="200" src="./assets/remove.gif">
+</p>
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Add Screen
+<p align="center">
+<img img width="200" src="./assets/add.png">
+</p>
