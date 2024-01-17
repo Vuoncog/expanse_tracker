@@ -1,3 +1,4 @@
+import 'package:expanse_tracker/component/chart.dart';
 import 'package:expanse_tracker/component/expense_list.dart';
 import 'package:expanse_tracker/models/expense.dart';
 import 'package:expanse_tracker/screen/add_screen.dart';
@@ -20,13 +21,33 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainState extends State<MainScreen> {
+  void addNewExpense(Expense expense) {
+    setState(() {
+      widget.expenses.add(expense);
+    });
+  }
 
-  void _openBottomSheet(){
-    showModalBottomSheet(context: context, builder: (context) => AddScreen());
+  void removeExpense(Expense expense) {
+    setState(() {
+      widget.expenses.remove(expense);
+    });
+  }
+
+  void _openBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => AddScreen(
+        addNewExpense: addNewExpense,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    widget.expenses.sort((expense1, expense2) =>
+        expense1.dateTime.compareTo(expense2.dateTime));
+
     return Scaffold(
       appBar: AppBar(
         title: const CustomText(
@@ -42,13 +63,15 @@ class _MainState extends State<MainScreen> {
         ],
       ),
       body: Container(
-        decoration: const BoxDecoration(
-          color: Color.fromARGB(250, 255, 250, 250)
-        ),
+        decoration:
+            const BoxDecoration(color: Color.fromARGB(250, 255, 250, 250)),
         child: Column(
           children: [
-            const Text("Chart"),
-            ExpenseList(expenses: widget.expenses)
+            Chart(expenses: widget.expenses),
+            ExpenseList(
+              expenses: widget.expenses,
+              removeExpense: removeExpense,
+            )
           ],
         ),
       ),

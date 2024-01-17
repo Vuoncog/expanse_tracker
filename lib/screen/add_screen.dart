@@ -1,10 +1,13 @@
 import 'package:expanse_tracker/component/custom_text.dart';
+import 'package:expanse_tracker/models/expense.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/Utils.dart';
 
 class AddScreen extends StatefulWidget {
-  const AddScreen({super.key});
+  const AddScreen({super.key, required this.addNewExpense});
+
+  final void Function(Expense expense) addNewExpense;
 
   @override
   State<StatefulWidget> createState() {
@@ -16,6 +19,7 @@ class _AddState extends State<AddScreen> {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
   DateTime? _selectedDate;
+  Category _category = Category.food;
 
   void _showDatePicker() async {
     final DateTime today = DateTime.now();
@@ -31,10 +35,61 @@ class _AddState extends State<AddScreen> {
     });
   }
 
+  void _setCategory(Category category) {
+    setState(() {
+      _category = category;
+    });
+  }
+
+  void _addExpense() {
+    final enterAmount = double.tryParse(_amountController.text);
+    final isValidAmount = enterAmount == null || enterAmount <= 0;
+    if (_selectedDate == null ||
+        _titleController.text.trim().isEmpty ||
+        isValidAmount) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const CustomText(
+            text: "Error",
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+          content: const CustomText(
+            text: "Please fill all text fields",
+            fontSize: 16,
+            fontWeight: FontWeight.normal,
+          ),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const CustomText(
+                  text: "OK",
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ))
+          ],
+        ),
+      );
+    } else {
+      widget.addNewExpense(
+        Expense(
+          _titleController.text,
+          double.tryParse(_amountController.text)!,
+          _selectedDate!,
+          _category,
+        ),
+      );
+      Navigator.pop(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 56, 16, 16),
       child: Column(
         children: [
           TextField(
@@ -74,7 +129,9 @@ class _AddState extends State<AddScreen> {
               ),
               const Spacer(),
               CustomText(
-                text: _selectedDate == null ? "No date selected" : formatter.format(_selectedDate!),
+                text: _selectedDate == null
+                    ? "No date selected"
+                    : formatter.format(_selectedDate!),
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),
@@ -90,8 +147,32 @@ class _AddState extends State<AddScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              TextButton(
-                onPressed: () {},
+              DropdownButton(
+                value: _category,
+                items: Category.values
+                    .map(
+                      (category) => DropdownMenuItem(
+                        value: category,
+                        child: CustomText(
+                            text: category.name.capitalize(),
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (value) {
+                  if (value != null) {
+                    _setCategory(value);
+                  } else {
+                    return;
+                  }
+                },
+              ),
+              const Spacer(),
+              OutlinedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
                 child: const CustomText(
                   text: "Cancel",
                   fontSize: 14,
@@ -99,13 +180,10 @@ class _AddState extends State<AddScreen> {
                 ),
               ),
               const SizedBox(
-                width: 20,
+                width: 12,
               ),
               FilledButton(
-                onPressed: () {
-                  print(_titleController.text);
-                  print(_amountController.text);
-                },
+                onPressed: _addExpense,
                 child: const CustomText(
                   text: "Add expense",
                   fontSize: 14,
