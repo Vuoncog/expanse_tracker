@@ -1,10 +1,7 @@
 # expanse_tracker
 
 ## :building_construction: Tech Stack
-- Kotlin
-- MongoDB
-- Firebase Storage
-- GCP (APIs & Services)
+- Flutter
 
 ### Feature
 - Add/Remove Expense
